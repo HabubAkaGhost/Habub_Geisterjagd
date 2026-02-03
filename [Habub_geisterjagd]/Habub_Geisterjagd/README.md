@@ -9,11 +9,4 @@ Das Script in deiner `server.cfg` eintragen.
 ## Schritt 3:
 Das Script nach deinen Wünschen konfigurieren.
 
-##Schritt 4: 
 
-kq_link 
-ebenfalls instalieren siehe ordner Struktur ebenfalls einstellen nach euren wünschen 
-
-##Schritt 5 
-
-Server neustart und Geister jagen gehen 

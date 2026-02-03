@@ -1,3 +1,3 @@
 if GetResourceState('kq_link') ~= 'started' then
-    error('^6[KQ_LINK MISSING] ^1kq_link is required but not running! Make sure that you\'ve got it installed and started before ' .. GetCurrentResourceName())
+    error('^6[KQ_LINK FEHLT] ^1kq_link ist erforderlich, läuft aber nicht! Stelle sicher, dass es installiert und gestartet ist, bevor ' .. GetCurrentResourceName())
 end

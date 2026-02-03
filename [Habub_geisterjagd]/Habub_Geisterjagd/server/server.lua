@@ -14,12 +14,6 @@ function GhostHunt:new()
     return self
 end
 
-function GhostHunt:RegisterUsableItem()
-    exports.kq_link:RegisterUsableItem('hs_camera', function(source)
-        TriggerClientEvent('habub_geisterjagd:capture', source)
-    end)
-end
-
 function GhostHunt:OnPlayerConnecting()
     AddEventHandler('playerConnecting', function()
         local src = source
@@ -44,10 +38,7 @@ function GhostHunt:PhotoTakenEvent()
     AddEventHandler('habub_geisterjagd:photoTaken', function(ghostID)
         local playerId = source
         if not playerProgress[playerId] then
-            playerProgress[playerId] = {
-                caughtGhosts = {},
-                huntCompleted = false
-            }
+            playerProgress[playerId] = { caughtGhosts = {}, huntCompleted = false }
         end
 
         playerProgress[playerId].caughtGhosts[ghostID] = true
@@ -77,10 +68,25 @@ function GhostHunt:GetCameraEvent()
     RegisterNetEvent('habub_geisterjagd:getCamera')
     AddEventHandler('habub_geisterjagd:getCamera', function()
         local src = source
-        local itemCount = exports.kq_link:GetPlayerItemCount(src, 'hs_camera')
-        if itemCount < 1 then
-            exports.kq_link:AddPlayerItem(src, 'hs_camera', 1, 0)
+
+        local ok = pcall(function()
+            local count = exports.ox_inventory:Search(src, 'count', 'hs_camera')
+            if (count or 0) < 1 then
+                exports.ox_inventory:AddItem(src, 'hs_camera', 1)
+            end
+        end)
+
+        if ok then return end
+
+        if exports['kq_link'] and exports['kq_link'].GetPlayerItemCount and exports['kq_link'].AddPlayerItem then
+            local itemCount = exports.kq_link:GetPlayerItemCount(src, 'hs_camera')
+            if itemCount < 1 then
+                exports.kq_link:AddPlayerItem(src, 'hs_camera', 1, 0)
+            end
+            return
         end
+
+        error('[Habub_Geisterjagd] Konnte hs_camera nicht geben (ox_inventory/kq_link).')
     end)
 end
 
@@ -89,7 +95,6 @@ function GhostHunt:GetIdentifier(src)
 end
 
 local ghostHuntInstance = GhostHunt:new()
-ghostHuntInstance:RegisterUsableItem()
 ghostHuntInstance:OnPlayerConnecting()
 ghostHuntInstance:LoadProgressEvent()
 ghostHuntInstance:PhotoTakenEvent()
